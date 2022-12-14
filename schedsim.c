@@ -12,42 +12,38 @@
 void findWaitingTimeRR(ProcessType plist[], int n,int quantum) 
 { 
   //1. Create an array *rem_bt[]* to keep track of remaining burst time of processes. This array is initially a copy of *plist[].bt* (all processes burst times)
+
   int rem_bt[n];
-  //2. Store waiting times of processes in plist[].wt. Initialize this array as 0.
-  for (int i = 0; i < n; i++){
-    rem_bt[i] = plist[i].bt;
-    plist[i].wt = 0;
+  int t = 0;   // step 3
+
+  for (int i = 0 ; i < n; i++){
+    rem_bt[i] = plist[i].bt;   // step 1 sort based on ascending order
+    plist[i].wt = 0; // step 2
   }
 
-  //3. Initialize time : t = 0
-  int t = 0;
+  while (true) {
 
-  while(1){
-    bool done = true;
+    bool process_finished = true;
 
-    for(int i = 0; i < n; i++){
-      //4. Keep traversing the all processes while all processes are not done. Do following for i'th process if it is not done yet.
-      if (rem_bt[i] > 0){
-        done = false;
-
-        if (rem_bt[i] > quantum){
-          t += quantum;
+    for (int i = 0; i < n ; i++) {
+      if(rem_bt[i] > 0){ 
+        if (rem_bt[i] > quantum) {
+          process_finished = false;
+          t = t + quantum;
+          rem_bt[i] -= quantum;
         }
-
-      else{
-        t = t + rem_bt[i];
-        
-        plist[i].wt = t - plist[i].bt;
-
-        rem_bt[i] = 0; 
-      }
+        else{
+          t = t + rem_bt[i];
+          plist[i].wt = t - plist[i].bt;
+          rem_bt[i] = 0;
+        }
       }
     }
 
-    if (done == true)
+    if (process_finished == true){
       break;
+    }
   }
-
 } 
 
 // Function to find the waiting time for all  
